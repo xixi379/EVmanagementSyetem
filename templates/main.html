@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>EV login</title>
+    <link type="text/css" href="{{ url_for('static', path = '/styles.css') }} " rel="stylesheet" />
+    <script type="module" src="{{ url_for('static', path = '/firebase=login.js') }}"></script>
+  </head>
+  <body>
+    <div id="login-box" hiddlen="true">
+      Email:<input type="email" name="" id="email"><br />
+      Password:<input type="password" name="" id="password"><br />
+      <button id="login">Login</button>
+      <button id="sign-up">Sign Up</button>
+    </div>
+    <button id="sign-out" hidden="true">Sign out</button>
+
+    {% if user_token%}
+        <p>User email: {{ user_email }}</p>
+        <p>error message: {{ user_token }}</p>
+    {% endif %}
+  </body>
+</html>
