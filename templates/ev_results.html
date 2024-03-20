@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EV Search Results</title>
+    <link rel="stylesheet" href="{{ url_for('static', path='/styles.css') }}">
+</head>
+<body>
+    <h1>Electric Vehicle Search Results</h1>
+
+    {% if evs %}
+        <ul>
+        {% for ev in evs %}
+            <li>
+               
+                <a href="#">{{ ev.name }} - {{ ev.manufacturer }} - {{ ev.year }}</a>
+            </li>
+        {% endfor %}
+        </ul>
+    {% else %}
+        <p>No results found.</p>
+    {% endif %}
+</body>
+</html>

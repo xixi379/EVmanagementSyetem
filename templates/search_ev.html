@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search EV</title>
+    <link rel="stylesheet" href="{{ url_for('static', path='/styles.css') }}">
+</head>
+<body>
+    <h1>Search Electric Vehicle</h1>
+    <form action="/query_ev" method="post">
+        <label for="attribute">Choose an attribute to search:</label><br>
+        <select name="attribute" id="attribute">
+            <option value="name">Name</option>
+            <option value="manufacturer">Manufacturer</option>
+            <option value="year">Year</option>
+            <option value="battery_size">Battery Size (Kwh)</option>
+            <option value="wltp_range">WLTP Range (Km)</option>
+            <option value="cost">Cost</option>
+            <option value="power">Power (Kw)</option>
+        </select><br><br>
+
+        <label for="query_value">Enter value:</label><br>
+        <input type="text" id="query_value" name="query_value" required><br><br>
+
+        <input type="submit" value="Search">
+    </form>
+</body>
+</html>

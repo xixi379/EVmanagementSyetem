@@ -71,7 +71,7 @@ async def root(request: Request):
     
     user_token = validateFirebaseIdToken(id_token)
     if not user_token:
-        return templates.TemplateResponse("main.html", {"request": request,'user_token':None,'error_message':None,'user_info':None})
+        return templates.TemplateResponse("main.html", {"request": request,'user_token':None,'user_email': None,'error_message':"Please log in!",'user_info':None})
     
     
     user = getUser(user_token)
