@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add EV</title>
+    <link rel="stylesheet" href="{{ url_for('static', path='/styles.css') }}">
+    <script type="module" src="{{ url_for('static', path = '/firebase-login.js') }}"></script>
+</head>
+<body>
+    <h1>Add a New Electric Vehicle</h1>
+    <form action="/add_ev" method="post">
+        <label for="name">Name:</label><br>
+        <input type="text" id="name" name="name" required><br>
+
+        <label for="manufacturer">Manufacturer:</label><br>
+        <input type="text" id="manufacturer" name="manufacturer" required><br>
+
+        <label for="year">Year:</label><br>
+        <input type="number" id="year" name="year" min="1900" max="2099" required><br>
+
+        <label for="battery_size">Battery Size (KWh):</label><br>
+        <input type="number" id="battery_size" name="battery_size" step="0.1" required><br>
+
+        <label for="wltp_range">WLTP Range (Km):</label><br>
+        <input type="number" id="wltp_range" name="wltp_range" required><br>
+
+        <label for="cost">Cost:</label><br>
+        <input type="number" id="cost" name="cost" step="0.01" required><br>
+
+        <label for="power">Power (Kw):</label><br>
+        <input type="number" id="power" name="power" step="0.1" required><br>
+
+        <input type="submit" value="Add EV">
+    </form>
+</body>
+</html>
