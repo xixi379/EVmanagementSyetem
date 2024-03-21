@@ -1,27 +1,11 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>EV login</title>
-    <link type="text/css" href="{{ url_for('static', path = '/styles.css') }} " rel="stylesheet" />
-    <script type="module" src="{{ url_for('static', path = '/firebase-login.js') }}"></script>
-  </head>
-  <body>
-    <div id="login-box" hidden="true">
-      Email:<input type="email" name="" id="email"><br />
-      Password:<input type="password" name="" id="password"><br />
-      <button id="login">Login</button>
-      <button id="sign-up">Sign Up</button>
-    </div>
-    <button id="sign-out" hidden="true">Sign out</button>
-
-    <!DOCTYPE html>
-<html>
-<head>
     <title>EV Dashboard</title>
     <link type="text/css" href="{{ url_for('static', path = '/styles.css') }}" rel="stylesheet" />
     <script type="module" src="{{ url_for('static', path = '/firebase-login.js') }}"></script>
-</head>
-<body>
+  </head>
+  <body>
     <div id="login-box" hidden>
         Email:<input type="email" id="email"><br />
         Password:<input type="password" id="password"><br />
@@ -31,7 +15,7 @@
     <button id="sign-out" hidden>Sign out</button>
 
     {% if user_token %}
-        <p>Welcome, {{ user_email }}!</p>
+        <p>Welcome, {{ user_token.email }}!</p>
         <p>{{ error_message }}</p>
         <nav>
             <ul>
@@ -42,8 +26,5 @@
     {% else %}
         <p>Please log in to manage EVs.</p>
     {% endif %}
-</body>
-</html>
-
   </body>
 </html>

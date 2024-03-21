@@ -12,14 +12,14 @@
     {% if evs %}
         <ul>
         {% for ev in evs %}
-            <li>
-               
-                <a href="#">{{ ev.name }} - {{ ev.manufacturer }} - {{ ev.year }}</a>
+            <li>      
+                <a href="/ev/{{ ev.id }}">{{ ev.name }} - {{ ev.manufacturer }} - {{ ev.year }}</a>
             </li>
         {% endfor %}
         </ul>
     {% else %}
         <p>No results found.</p>
     {% endif %}
+    <a href="/search_ev">Back to search</a>
 </body>
 </html>

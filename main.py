@@ -119,12 +119,45 @@ async def search_ev(request: Request):
     return templates.TemplateResponse("search_ev.html", {"request": request})
 
 @app.post("/query_ev", response_class=HTMLResponse)
-async def query_ev(request: Request, attribute: str = Form(...), query_value: str = Form(...)):
-    # Handle different attribute types and search accordingly
-    # For simplicity, we're showing string-based querying here
-    evs = firestore_db.collection('evs').where(attribute, '==', query_value).stream()
-    ev_list = [ev.to_dict() for ev in evs]
+async def query_ev(request: Request, name: str = Form(""), manufacturer: str = Form(""), year: str = Form(""),
+                   battery_size: str = Form(""), wltp_range: str = Form(""), cost: str = Form(""), power: str = Form("")):
+    ev_query = firestore_db.collection('evs')
+    
+    # Construct query based on provided input fields
+    if name:
+        ev_query = ev_query.where("name", '==', name)
+    if manufacturer:
+        ev_query = ev_query.where("manufacturer", '==', manufacturer)
+    if year:
+        ev_query = ev_query.where("year", '==', int(year))
+    if battery_size:
+        ev_query = ev_query.where("battery_size", '==', float(battery_size))
+    if wltp_range:
+        ev_query = ev_query.where("wltp_range", '==', int(wltp_range))
+    if cost:
+        ev_query = ev_query.where("cost", '==', float(cost))
+    if power:
+        ev_query = ev_query.where("power", '==', float(power))
+
+    # Fetch and stream the query results
+    evs = ev_query.stream()
+    ev_list = [{"id": ev.id, **ev.to_dict()} for ev in evs]
+    
+
+    # Render the EV results template with the list of EVs
     return templates.TemplateResponse("ev_results.html", {"request": request, "evs": ev_list})
+
+@app.get("/ev/{ev_id}", response_class=HTMLResponse)
+async def ev_detail(request: Request, ev_id: str):
+    ev_document = firestore_db.collection('evs').document(ev_id).get()
+    if ev_document.exists:
+        return templates.TemplateResponse("ev_detail.html", {
+            "request": request,
+            "ev": ev_document.to_dict(),
+            "ev_id": ev_id
+        })
+    else:
+        return RedirectResponse(url="/search_ev", status_code=status.HTTP_302_FOUND)
 
 
     

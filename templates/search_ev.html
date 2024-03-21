@@ -9,19 +9,26 @@
 <body>
     <h1>Search Electric Vehicle</h1>
     <form action="/query_ev" method="post">
-        <label for="attribute">Choose an attribute to search:</label><br>
-        <select name="attribute" id="attribute">
-            <option value="name">Name</option>
-            <option value="manufacturer">Manufacturer</option>
-            <option value="year">Year</option>
-            <option value="battery_size">Battery Size (Kwh)</option>
-            <option value="wltp_range">WLTP Range (Km)</option>
-            <option value="cost">Cost</option>
-            <option value="power">Power (Kw)</option>
-        </select><br><br>
+        <label for="name">Name:</label>
+        <input type="text" id="name" name="name"><br><br>
 
-        <label for="query_value">Enter value:</label><br>
-        <input type="text" id="query_value" name="query_value" required><br><br>
+        <label for="manufacturer">Manufacturer:</label>
+        <input type="text" id="manufacturer" name="manufacturer"><br><br>
+
+        <label for="year">Year:</label>
+        <input type="number" id="year" name="year"><br><br>
+
+        <label for="battery_size">Battery Size (Kwh):</label>
+        <input type="text" id="battery_size" name="battery_size"><br><br>
+
+        <label for="wltp_range">WLTP Range (Km):</label>
+        <input type="text" id="wltp_range" name="wltp_range"><br><br>
+
+        <label for="cost">Cost:</label>
+        <input type="text" id="cost" name="cost"><br><br>
+
+        <label for="power">Power (Kw):</label>
+        <input type="text" id="power" name="power"><br><br>
 
         <input type="submit" value="Search">
     </form>
