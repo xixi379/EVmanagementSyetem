@@ -149,9 +149,29 @@ async def query_ev(request: Request, name: str = Form(""), manufacturer: str = F
 
 @app.get("/ev/{ev_id}", response_class=HTMLResponse)
 async def ev_detail(request: Request, ev_id: str):
+    user_token = validateFirebaseIdToken(request.cookies.get("token"))  # Add this line to declare the "user_token" variable
     ev_document = firestore_db.collection('evs').document(ev_id).get()
     if ev_document.exists:
         return templates.TemplateResponse("ev_detail.html", {
+            "request": request,
+            "ev": ev_document.to_dict(),
+            "ev_id": ev_id,
+            "user_token": user_token
+        })
+    else:
+        return RedirectResponse(url="/search_ev", status_code=status.HTTP_302_FOUND)
+
+
+@app.get("/ev/{ev_id}/edit", response_class=HTMLResponse)
+async def edit_ev_form(request: Request, ev_id: str):
+    # Verify user token
+    user_token = validateFirebaseIdToken(request.cookies.get("token"))
+    if not user_token:
+        return RedirectResponse(url="/", status_code=status.HTTP_302_FOUND)
+
+    ev_document = firestore_db.collection('evs').document(ev_id).get()
+    if ev_document.exists:
+        return templates.TemplateResponse("edit_ev.html", {
             "request": request,
             "ev": ev_document.to_dict(),
             "ev_id": ev_id
@@ -159,6 +179,44 @@ async def ev_detail(request: Request, ev_id: str):
     else:
         return RedirectResponse(url="/search_ev", status_code=status.HTTP_302_FOUND)
 
-
+@app.post("/ev/{ev_id}/update", response_class=RedirectResponse)
+async def update_ev(request: Request, ev_id: str, name: str = Form(...), manufacturer: str = Form(...), 
+                    year: int = Form(...), battery_size: str = Form(...), wltp_range: str = Form(...), 
+                    cost: str = Form(...), power: str = Form(...)):
+    # Verify user token
+    user_token = validateFirebaseIdToken(request.cookies.get("token"))
+    if not user_token:
+        return RedirectResponse(url="/", status_code=status.HTTP_302_FOUND)
     
+    # Prepare the updated data
+    updated_data = {
+        'name': name,
+        'manufacturer': manufacturer,
+        'year': int(year),
+        'battery_size': float(battery_size),
+        'wltp_range': int(wltp_range),
+        'cost': float(cost),
+        'power': float(power)
+    }
+
+    # Update EV document
+    firestore_db.collection('evs').document(ev_id).update(updated_data)
+    
+    return RedirectResponse(url=f"/ev/{ev_id}", status_code=status.HTTP_302_FOUND)
+
+
+
+# delete ev
+@app.post("/ev/{ev_id}/delete", response_class=RedirectResponse)
+async def delete_ev(request: Request, ev_id: str):
+    # Verify user token
+    user_token = validateFirebaseIdToken(request.cookies.get("token"))
+    if not user_token:
+        return RedirectResponse(url="/", status_code=status.HTTP_302_FOUND)
+    
+    # Delete the EV document
+    firestore_db.collection('evs').document(ev_id).delete()
+    
+    return RedirectResponse(url="/search_ev", status_code=status.HTTP_302_FOUND)
+
     

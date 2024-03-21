@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit {{ ev.name }}</title>
+</head>
+<body>
+    <h1>Edit {{ ev.name }}</h1>
+    <form action="/ev/{{ ev_id }}/update" method="post">
+        
+        <label for="name">Name:</label>
+        <input type="text" id="name" name="name" value="{{ ev.name }}"><br>
+
+        <label for="manufacturer">Manufacturer:</label>
+        <input type="text" id="manufacturer" name="manufacturer" value="{{ ev.manufacturer }}"><br>
+
+        <label for="year">Year:</label>
+        <input type="number" id="year" name="year" value="{{ ev.year }}"><br>
+
+        <label for="battery_size">Battery Size (Kwh):</label>
+        <input type="text" id="battery_size" name="battery_size" value="{{ ev.battery_size }}"><br>
+
+        <label for="wltp_range">WLTP Range (Km):</label>
+        <input type="text" id="wltp_range" name="wltp_range" value="{{ ev.wltp_range }}"><br>
+
+        <label for="cost">Cost:</label>
+        <input type="text" id="cost" name="cost" value="{{ ev.cost }}"><br>
+
+        <label for="power">Power (Kw):</label>
+        <input type="text" id="power" name="power" value="{{ ev.power }}"><br>
+
+        <input type="submit" value="Update EV">
+    </form>
+</body>
+</html>

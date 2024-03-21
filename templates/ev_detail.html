@@ -2,7 +2,6 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ ev.name }} Details</title>
     <link rel="stylesheet" href="{{ url_for('static', path='/styles.css') }}">
 </head>
@@ -14,16 +13,18 @@
     <p>WLTP Range: {{ ev.wltp_range }} Km</p>
     <p>Cost: {{ ev.cost }}</p>
     <p>Power: {{ ev.power }} Kw</p>
+
+{% if user_token %}
+    <!-- Link to navigate to the edit page -->
+    <a href="/ev/{{ ev_id }}/edit">Edit EV</a>
     
-    <!-- Only show edit and delete options if a user is logged in -->
-    {% if user_token %}
-        <a href="/ev/{{ ev_id }}/edit">Edit</a>
-        <form action="/ev/{{ ev_id }}/delete" method="post">
-            <input type="submit" value="Delete EV">
-        </form>
-    {% endif %}
+    <!-- Form to submit a delete request -->
+    <form action="/ev/{{ ev_id }}/delete" method="post">
+        <input type="submit" value="Delete EV" onclick="return confirm('Are you sure you want to delete this EV?');">
+    </form>
+{% endif %}
+
 
     <a href="/search_ev">Back to search</a>
 </body>
 </html>
-
