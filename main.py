@@ -149,6 +149,7 @@ async def query_ev(request: Request, name: str = Form(""), manufacturer: str = F
 
 @app.get("/ev/{ev_id}", response_class=HTMLResponse)
 async def ev_detail(request: Request, ev_id: str):
+    print("Received ev_id:", ev_id)
     user_token = validateFirebaseIdToken(request.cookies.get("token"))  # Add this line to declare the "user_token" variable
     ev_document = firestore_db.collection('evs').document(ev_id).get()
     if ev_document.exists:
@@ -219,4 +220,49 @@ async def delete_ev(request: Request, ev_id: str):
     
     return RedirectResponse(url="/search_ev", status_code=status.HTTP_302_FOUND)
 
-    
+# compare ev
+@app.get("/compare_ev", response_class=HTMLResponse)
+async def compare_ev_form(request: Request):
+    evs = firestore_db.collection('evs').stream()
+    ev_list = [{"id": ev.id, **ev.to_dict()} for ev in evs]
+    return templates.TemplateResponse("compare_ev.html", {"request": request, "evs": ev_list})
+
+
+# @app.post("/perform_comparison", response_class=HTMLResponse)
+# async def perform_comparison(request: Request, ev1: str = Form(...), ev2: str = Form(...)):
+#     # Fetch the two EV documents for comparison
+#     ev_document_1 = firestore_db.collection('evs').document(ev1).get()
+#     ev_document_2 = firestore_db.collection('evs').document(ev2).get()
+
+#     if ev_document_1.exists and ev_document_2.exists:
+#         ev1_data = ev_document_1.to_dict()
+#         ev2_data = ev_document_2.to_dict()
+#         # Pass the EV data to the comparison template
+#         return templates.TemplateResponse("comparison_result.html", {
+#             "request": request,
+#             "ev1": ev1_data,
+#             "ev2": ev2_data,
+#         })
+#     else:
+#         return RedirectResponse(url="/compare_ev", status_code=status.HTTP_302_FOUND)
+
+@app.get("/perform_comparison", response_class=HTMLResponse)
+async def perform_comparison(request: Request, ev1_id: str, ev2_id: str):
+    ev_document_1 = firestore_db.collection('evs').document(ev1_id).get()
+    ev_document_2 = firestore_db.collection('evs').document(ev2_id).get()
+
+    if ev_document_1.exists and ev_document_2.exists:
+        ev1_data = ev_document_1.to_dict()
+        ev1_data['id'] = ev1_id  # Include the ID in the data for hyperlinking
+        ev2_data = ev_document_2.to_dict()
+        ev2_data['id'] = ev2_id  # Include the ID in the data for hyperlinking
+        # Pass the EV data to the comparison template
+        return templates.TemplateResponse("comparison_result.html", {
+            "request": request,
+            "ev1": ev1_data,
+            "ev2": ev2_data
+        })
+    else:
+        # If one of the EVs doesn't exist, redirect back to the comparison selection page
+        return RedirectResponse(url="/compare_ev", status_code=status.HTTP_302_FOUND)
+

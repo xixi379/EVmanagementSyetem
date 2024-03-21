@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="{{ url_for('static', path='/styles.css') }}">
+    <title>Comparison Results</title>
+</head>
+<body>
+    <h1>Comparison Results</h1>
+    <table>
+        <tr>
+            <th>Attribute</th>
+            <th>EV 1</th>
+            <th>EV 2</th>
+        </tr>
+        <tr>
+            <td>Name</td>
+            <td><a href="/ev/{{ ev1.id }}">{{ ev1.name }}</a></td>
+            <td><a href="/ev/{{ ev2.id }}">{{ ev2.name }}</a></td>
+        </tr>
+        <tr>
+            <td>Manufacturer</td>
+            <td>{{ ev1.manufacturer }}</td>
+            <td>{{ ev2.manufacturer }}</td>
+        </tr>
+        <tr>
+            <td>Year</td>
+            <td>{{ ev1.year }}</td>
+            <td>{{ ev2.year }}</td>
+        </tr>
+        <tr>
+            <td>Battery Size (Kwh)</td>
+            <td class="{{ 'high-value' if ev1.battery_size > ev2.battery_size else 'low-value' if ev1.battery_size < ev2.battery_size }}">
+                {{ ev1.battery_size }}
+            </td>
+            <td class="{{ 'high-value' if ev2.battery_size > ev1.battery_size else 'low-value' if ev2.battery_size < ev1.battery_size }}">
+                {{ ev2.battery_size }}
+            </td>
+        </tr>
+        <tr>
+            <td>WLTP Range (Km)</td>
+            <td class="{{ 'high-value' if ev1.wltp_range > ev2.wltp_range else 'low-value' if ev1.wltp_range < ev2.wltp_range }}">
+                {{ ev1.wltp_range }}
+            </td>
+            <td class="{{ 'high-value' if ev2.wltp_range > ev1.wltp_range else 'low-value' if ev2.wltp_range < ev1.wltp_range }}">
+                {{ ev2.wltp_range }}
+            </td>
+        </tr>
+        <tr>
+            <td>Cost</td>
+            <td class="{{ 'low-cost' if ev1.cost < ev2.cost else 'high-cost' if ev1.cost > ev2.cost }}">
+                {{ ev1.cost }}
+            </td>
+            <td class="{{ 'low-cost' if ev2.cost < ev1.cost else 'high-cost' if ev2.cost > ev1.cost }}">
+                {{ ev2.cost }}
+            </td>
+        </tr>
+        <tr>
+            <td>Power (Kw)</td>
+            <td class="{{ 'high-value' if ev1.power > ev2.power else 'low-value' if ev1.power < ev2.power }}">
+                {{ ev1.power }}
+            </td>
+            <td class="{{ 'high-value' if ev2.power > ev1.power else 'low-value' if ev2.power < ev1.power }}">
+                {{ ev2.power }}
+            </td>
+        </tr>
+    </table>
+    <a href="/compare_ev">Back to compare</a>
+</body>
+</html>

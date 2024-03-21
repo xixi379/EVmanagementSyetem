@@ -9,17 +9,25 @@
 <body>
     <h1>Electric Vehicle Search Results</h1>
 
-    {% if evs %}
-        <ul>
-        {% for ev in evs %}
-            <li>      
-                <a href="/ev/{{ ev.id }}">{{ ev.name }} - {{ ev.manufacturer }} - {{ ev.year }}</a>
-            </li>
-        {% endfor %}
-        </ul>
-    {% else %}
-        <p>No results found.</p>
-    {% endif %}
+    <!-- Start of form for comparison -->
+    <form action="/compare_ev" method="post">
+        {% if evs %}
+            <ul>
+            {% for ev in evs %}
+                <li>      
+                    <a href="/ev/{{ ev.id }}">{{ ev.name }} - {{ ev.manufacturer }} - {{ ev.year }}</a>
+                    <!-- Checkbox for selecting an EV to compare -->
+                    <input type="checkbox" name="ev_to_compare" value="{{ ev.id }}">
+                </li>
+            {% endfor %}
+            </ul>
+            <!-- Button to submit the two selected EVs for comparison -->
+            <input type="submit" value="Compare Selected EVs">
+        {% else %}
+            <p>No results found.</p>
+        {% endif %}
+    </form>
+
     <a href="/search_ev">Back to search</a>
 </body>
 </html>
