@@ -14,7 +14,13 @@
     </div>
     <button id="sign-out" hidden>Sign out</button>
 
-    <a href="/compare_ev">Compare EVs</a>
+    <!-- Links that are always visible for log-in users and also guests-->
+    <nav>
+      <ul>
+          <li><a href="/search_ev">Search EV Database</a></li>
+          <li><a href="/compare_ev">Compare EVs</a></li>
+      </ul>
+    </nav>
 
     {% if user_token %}
         <p>Welcome, {{ user_token.email }}!</p>
@@ -22,7 +28,6 @@
         <nav>
             <ul>
                 <li><a href="/add_ev">Add New EV</a></li>
-                <li><a href="/search_ev">Search EV Database</a></li>
             </ul>
         </nav>
     {% else %}

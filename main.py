@@ -100,6 +100,17 @@ async def add_ev_form(request: Request):
 async def add_ev(request: Request, name: str = Form(...), manufacturer: str = Form(...), year: int = Form(...), 
                  battery_size: float = Form(...), wltp_range: int = Form(...), cost: float = Form(...), 
                  power: float = Form(...)):
+    
+     # Check if an EV with the same name already exists
+    existing_ev_query = firestore_db.collection('evs').where("name", "==", name).limit(1).stream()
+    existing_ev = list(existing_ev_query)
+
+    if existing_ev:
+        # EV with the same name exists, so do not add a new one.
+        return RedirectResponse(url="/add_ev?error=EV name already exists", status_code=status.HTTP_302_FOUND)
+    
+    
+    
     ev_data = {
         'name': name,
         'manufacturer': manufacturer,
