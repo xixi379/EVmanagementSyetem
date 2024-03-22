@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
+  <head>
+    <meta charset="UTF-8" />
     <title>{{ ev.name }} Details</title>
-    <link rel="stylesheet" href="{{ url_for('static', path='/styles.css') }}">
-</head>
-<body>
+    <link rel="stylesheet" href="{{ url_for('static', path = '/styles.css') }}" />
+  </head>
+  <body>
     <h1>{{ ev.name }} Details</h1>
     <p>Manufacturer: {{ ev.manufacturer }}</p>
     <p>Year: {{ ev.year }}</p>
@@ -14,18 +14,42 @@
     <p>Cost: {{ ev.cost }}</p>
     <p>Power: {{ ev.power }} Kw</p>
 
-{% if user_token %}
-    <!-- Link to navigate to the edit page -->
-    <a href="/ev/{{ ev_id }}/edit">Edit EV</a>
-    
-    <!-- Form to submit a delete request -->
-    <form action="/ev/{{ ev_id }}/delete" method="post">
-        <input type="submit" value="Delete EV" onclick="return confirm('Are you sure you want to delete this EV?');">
-    </form>
-{% endif %}
+    {% if user_token %}
+      <!-- Link to navigate to the edit page -->
+      <a href="/ev/{{ ev_id }}/edit">Edit EV</a>
 
+      <!-- Form to submit a delete request -->
+      <form action="/ev/{{ ev_id }}/delete" method="post">
+        <input type="submit" value="Delete EV" onclick="return confirm('Are you sure you want to delete this EV?');" />
+      </form>
+    {% endif %}
+
+
+
+    <!-- Review form -->
+    <h2>Submit a Review</h2>
+    <form action="/ev/{{ ev_id }}/review" method="post">
+      <textarea name="comment" rows="4" maxlength="1000" placeholder="Your review" required></textarea><br />
+      <input type="number" name="rating" min="0" max="10" step="1" placeholder="Rating (0-10)" required /><br />
+      <input type="submit" value="Submit Review" />
+    </form>
+
+    <h2>Average Score: {{ average_score }}</h2>
+
+    <div>
+      <h3>Reviews:</h3>
+      {% for review in reviews %}
+        <div class="review">
+          <p>Score: {{ review.score }}</p>
+          <p>{{ review.comment }}</p>
+          <p>Date: {{ review.timestamp }}</p>
+        </div>
+      {% endfor %}
+    </div>
 
     <a href="/search_ev">Back to search</a>
-    <p><a href="/compare_ev">Compare this EV with another</a></p>
-</body>
+    <p>
+      <a href="/compare_ev">Compare this EV with another</a>
+    </p>
+  </body>
 </html>

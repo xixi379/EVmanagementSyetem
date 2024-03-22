@@ -31,7 +31,6 @@ def getUser(user_token):
         user_data={
             
             'name': 'no name yet',
-            'age': 0
         }
         firestore_db.collection('users').document(user_token['user_id']).set(user_data)
         
@@ -147,20 +146,56 @@ async def query_ev(request: Request, name: str = Form(""), manufacturer: str = F
     # Render the EV results template with the list of EVs
     return templates.TemplateResponse("ev_results.html", {"request": request, "evs": ev_list})
 
+
+@app.post("/ev/{ev_id}/review", response_class=RedirectResponse)
+async def submit_review(request: Request, ev_id: str, comment: str = Form(...), rating: int = Form(...)):
+    # Construct the review data
+    review = {
+        'comment': comment,
+        'rating': rating
+    }
+    
+    # Add the review to the EV document
+    ev_document_ref = firestore_db.collection('evs').document(ev_id)
+    ev_document = ev_document_ref.get()
+    if ev_document.exists:
+        ev_data = ev_document.to_dict()
+        if 'reviews' not in ev_data:
+            ev_data['reviews'] = []
+        ev_data['reviews'].append(review)
+        ev_document_ref.set(ev_data)
+    return RedirectResponse(url=f"/ev/{ev_id}", status_code=status.HTTP_302_FOUND)
+
+
+
 @app.get("/ev/{ev_id}", response_class=HTMLResponse)
 async def ev_detail(request: Request, ev_id: str):
-    print("Received ev_id:", ev_id)
-    user_token = validateFirebaseIdToken(request.cookies.get("token"))  # Add this line to declare the "user_token" variable
+    user_token = validateFirebaseIdToken(request.cookies.get("token"))
     ev_document = firestore_db.collection('evs').document(ev_id).get()
+
     if ev_document.exists:
+        ev_data = ev_document.to_dict()
+        ev_data['id'] = ev_id
+
+        # Fetch reviews for the EV and calculate the average score
+        reviews_query = firestore_db.collection('evs').document(ev_id).collection('reviews').order_by('timestamp', direction=firestore.Query.DESCENDING)
+        reviews = reviews_query.stream()
+        review_list = [review.to_dict() for review in reviews]
+
+        # Calculate average score
+        total_score = sum(review['score'] for review in review_list)
+        average_score = total_score / len(review_list) if review_list else None
+
         return templates.TemplateResponse("ev_detail.html", {
             "request": request,
-            "ev": ev_document.to_dict(),
-            "ev_id": ev_id,
+            "ev": ev_data,
+            "reviews": review_list,
+            "average_score": average_score,
             "user_token": user_token
         })
     else:
         return RedirectResponse(url="/search_ev", status_code=status.HTTP_302_FOUND)
+
 
 
 @app.get("/ev/{ev_id}/edit", response_class=HTMLResponse)
@@ -227,25 +262,6 @@ async def compare_ev_form(request: Request):
     ev_list = [{"id": ev.id, **ev.to_dict()} for ev in evs]
     return templates.TemplateResponse("compare_ev.html", {"request": request, "evs": ev_list})
 
-
-# @app.post("/perform_comparison", response_class=HTMLResponse)
-# async def perform_comparison(request: Request, ev1: str = Form(...), ev2: str = Form(...)):
-#     # Fetch the two EV documents for comparison
-#     ev_document_1 = firestore_db.collection('evs').document(ev1).get()
-#     ev_document_2 = firestore_db.collection('evs').document(ev2).get()
-
-#     if ev_document_1.exists and ev_document_2.exists:
-#         ev1_data = ev_document_1.to_dict()
-#         ev2_data = ev_document_2.to_dict()
-#         # Pass the EV data to the comparison template
-#         return templates.TemplateResponse("comparison_result.html", {
-#             "request": request,
-#             "ev1": ev1_data,
-#             "ev2": ev2_data,
-#         })
-#     else:
-#         return RedirectResponse(url="/compare_ev", status_code=status.HTTP_302_FOUND)
-
 @app.get("/perform_comparison", response_class=HTMLResponse)
 async def perform_comparison(request: Request, ev1_id: str, ev2_id: str):
     ev_document_1 = firestore_db.collection('evs').document(ev1_id).get()
@@ -265,4 +281,5 @@ async def perform_comparison(request: Request, ev1_id: str, ev2_id: str):
     else:
         # If one of the EVs doesn't exist, redirect back to the comparison selection page
         return RedirectResponse(url="/compare_ev", status_code=status.HTTP_302_FOUND)
+
 
