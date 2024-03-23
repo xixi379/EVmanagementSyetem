@@ -78,20 +78,29 @@ async def root(request: Request):
     return templates.TemplateResponse("main.html", {"request": request,'user_token':user_token,'error_message':error_message,'user_info':user.get()})
         
         
-@app.get("/update_user",response_class=HTMLResponse)
-async def updateForm(request: Request):
+# @app.get("/update_user",response_class=HTMLResponse)
+# async def updateForm(request: Request):
     
-    id_token = request.cookies.get("token")
-    
-    
-    user_token = validateFirebaseIdToken(id_token)
-    if not user_token:
-        return RedirectResponse('/')
+#     id_token = request.cookies.get("token")
+#     user_token = validateFirebaseIdToken(id_token)
+#     if not user_token:
+#         return RedirectResponse('/')
     
     
-    user = getUser(user_token)
-    return templates.TemplateResponse("update.html", {"request": request,'user_token':user_token,'error_message':None,'user_info':user.get()})
+#     user = getUser(user_token)
+#     return templates.TemplateResponse("update.html", {"request": request,'user_token':user_token,'error_message':None,'user_info':user.get()})
 
+@app.get("/view_ev", response_class=HTMLResponse)
+async def view_ev(request: Request):
+    user_token = validateFirebaseIdToken(request.cookies.get("token"))
+    evs_query = firestore_db.collection('evs').stream()
+    evs_list = [{"id": ev.id, **ev.to_dict()} for ev in evs_query]
+    
+    return templates.TemplateResponse("view_ev.html", {
+        "request": request,
+        "evs": evs_list,
+        "user_token": user_token
+    })
 
 @app.get("/add_ev", response_class=HTMLResponse)
 async def add_ev_form(request: Request):
@@ -102,7 +111,7 @@ async def add_ev(request: Request, name: str = Form(...), manufacturer: str = Fo
                  battery_size: float = Form(...), wltp_range: int = Form(...), cost: float = Form(...), 
                  power: float = Form(...)):
     
-     # Check if an EV with the same name already exists
+     # Check if an EV with the same name already exists to avoid major bug
     existing_ev_query = firestore_db.collection('evs').where("name", "==", name).limit(1).stream()
     existing_ev = list(existing_ev_query)
 

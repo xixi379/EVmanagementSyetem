@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>View EVs</title>
+    <link rel="stylesheet" href="{{ url_for('static', path='/styles.css') }}">
+</head>
+<body>
+    <h1>Electric Vehicles</h1>
+    <ul>
+        {% for ev in evs %}
+            <li><a href="/ev/{{ ev.id }}">{{ ev.name }}</a></li>
+        {% endfor %}
+    </ul>
+    <a href="/">Back to Dashboard</a>
+
+</body>
+</html>

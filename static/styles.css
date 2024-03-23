@@ -16,6 +16,11 @@ body {
     display: inline-block;
 }
 
+
+#login-box[hidden] {
+    display: none;
+}
+
 #login-box input[type=email],
 #login-box input[type=password] {
     margin-bottom: 10px;
