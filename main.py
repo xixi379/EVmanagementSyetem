@@ -121,7 +121,7 @@ async def add_ev(request: Request, name: str = Form(...), manufacturer: str = Fo
         'power': power
     }
     firestore_db.collection('evs').add(ev_data)
-    return RedirectResponse('/add_ev', status_code=status.HTTP_302_FOUND)
+    return RedirectResponse('/', status_code=status.HTTP_302_FOUND)
 
 @app.get("/search_ev", response_class=HTMLResponse)
 async def search_ev(request: Request):
@@ -153,8 +153,6 @@ async def query_ev(request: Request, name: str = Form(""), manufacturer: str = F
     evs = ev_query.stream()
     ev_list = [{"id": ev.id, **ev.to_dict()} for ev in evs]
     
-
-    # Render the EV results template with the list of EVs
     return templates.TemplateResponse("ev_results.html", {"request": request, "evs": ev_list})
 
 
@@ -200,6 +198,7 @@ async def ev_detail(request: Request, ev_id: str):
         return templates.TemplateResponse("ev_detail.html", {
             "request": request,
             "ev": ev_data,
+            "ev_id": ev_id,
             "reviews": review_list,
             "average_score": average_score,
             "user_token": user_token

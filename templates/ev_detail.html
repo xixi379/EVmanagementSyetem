@@ -15,10 +15,10 @@
     <p>Power: {{ ev.power }} Kw</p>
 
     {% if user_token %}
-      <!-- Link to navigate to the edit page -->
+      <!-- Edit and delete buttons -->
       <a href="/ev/{{ ev_id }}/edit">Edit EV</a>
 
-      <!-- Form to submit a delete request -->
+      
       <form action="/ev/{{ ev_id }}/delete" method="post">
         <input type="submit" value="Delete EV" onclick="return confirm('Are you sure you want to delete this EV?');" />
       </form>
