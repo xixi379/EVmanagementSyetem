@@ -6,6 +6,7 @@ import google.oauth2.id_token;
 from google.auth.transport import requests
 from google.cloud import firestore
 import starlette.status as status
+import datetime
 
 
 app = FastAPI()
@@ -161,18 +162,14 @@ async def submit_review(request: Request, ev_id: str, comment: str = Form(...), 
     # Construct the review data
     review = {
         'comment': comment,
-        'rating': rating
+        'rating': rating,
+        'datetime': datetime.datetime.now()
     }
     
-    # Add the review to the EV document
-    ev_document_ref = firestore_db.collection('evs').document(ev_id)
-    ev_document = ev_document_ref.get()
-    if ev_document.exists:
-        ev_data = ev_document.to_dict()
-        if 'reviews' not in ev_data:
-            ev_data['reviews'] = []
-        ev_data['reviews'].append(review)
-        ev_document_ref.set(ev_data)
+    # Add the review to sub-doc of the EV document
+    ev_reviews_ref = firestore_db.collection('evs').document(ev_id).collection('reviews')
+    ev_reviews_ref.add(review)
+
     return RedirectResponse(url=f"/ev/{ev_id}", status_code=status.HTTP_302_FOUND)
 
 
@@ -187,13 +184,13 @@ async def ev_detail(request: Request, ev_id: str):
         ev_data['id'] = ev_id
 
         # Fetch reviews for the EV and calculate the average score
-        reviews_query = firestore_db.collection('evs').document(ev_id).collection('reviews').order_by('timestamp', direction=firestore.Query.DESCENDING)
+        reviews_query = firestore_db.collection('evs').document(ev_id).collection('reviews').order_by('datetime', direction=firestore.Query.DESCENDING)
         reviews = reviews_query.stream()
         review_list = [review.to_dict() for review in reviews]
 
         # Calculate average score
-        total_score = sum(review['score'] for review in review_list)
-        average_score = total_score / len(review_list) if review_list else None
+        total_score = sum(review['rating'] for review in review_list)
+        average_score = total_score / len(review_list) if review_list else 0
 
         return templates.TemplateResponse("ev_detail.html", {
             "request": request,

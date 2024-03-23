@@ -40,16 +40,17 @@
       <h3>Reviews:</h3>
       {% for review in reviews %}
         <div class="review">
-          <p>Score: {{ review.score }}</p>
-          <p>{{ review.comment }}</p>
-          <p>Date: {{ review.timestamp }}</p>
+          <p>Rating: {{ review.rating }}</p>
+          <p>Comment:{{ review.comment }}</p>
+          <p>Date: {{ review.datetime }}</p>
         </div>
       {% endfor %}
     </div>
 
     <a href="/search_ev">Back to search</a>
-    <p>
-      <a href="/compare_ev">Compare this EV with another</a>
-    </p>
+    
+    <a href="/compare_ev">Compare this EV with another</a>
+    
+
   </body>
 </html>
